@@ -9,6 +9,7 @@ import pyautogui
 
 import pystray
 
+from winotify import Notification
 
 TMouseApp = TypeVar("TMouseApp", bound="MouseApp")
 
@@ -19,7 +20,7 @@ class MouseApp:
     def __init__(self: TMouseApp, time_to_monitor: int = 120, show_position: bool = False) -> TMouseApp:
         """Create all needed menus, and sub menus from the app."""
         self.icon_image = PIL.Image.open("C:\\Windows\\Cursors\\lperson.cur")
-        self.menu_hello = pystray.MenuItem("Say Hello", self._on_clicked)
+        self.menu_hello = pystray.MenuItem("Say Hello", self._say_hello)
         self.menu_start = pystray.MenuItem("Start", self._start)
         self.menu_pause = pystray.MenuItem("Pause", self._pause)
         self.menu_exit = pystray.MenuItem("Exit", self._exit)
@@ -34,6 +35,7 @@ class MouseApp:
         self.show_position = show_position
         self.t = None
         self.continue_run = False
+        self.toast = Notification("KMI", "KMI Settings", "Hello there, Have great day at work! :)")
         self._start()
 
     def run(self: TMouseApp) -> None:
@@ -81,8 +83,10 @@ class MouseApp:
 
     def _on_clicked(self: TMouseApp, icon: pystray.Icon, item: pystray.MenuItem) -> None:
         """Act when a menu item is clicked."""
-        if str(item) == "Say Hello":
-            print("Hello World")
+        print("Hello World")
+
+    def _say_hello(self) -> None:
+        self.toast.show()
 
     def _start(self) -> None:
         self.continue_run = True
