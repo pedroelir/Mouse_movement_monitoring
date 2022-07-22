@@ -25,15 +25,16 @@ class MouseApp:
         self.menu_exit = pystray.MenuItem("Exit", self._exit)
         self.app_menu = pystray.Menu(self.menu_hello, self.menu_start, self.menu_pause, self.menu_exit)
         self.icon = pystray.Icon(
-            "Fejka mysz",
+            "KMI Settings",
             self.icon_image,
-            title="Fejka mysz",
+            title="KMI Settings",
             menu=self.app_menu,
         )
         self.time_to_monitor = time_to_monitor
         self.show_position = show_position
         self.t = None
         self.continue_run = False
+        self._start()
 
     def run(self: TMouseApp) -> None:
         """Run application."""
@@ -59,7 +60,7 @@ class MouseApp:
             old_position = current_position
             current_time = time.monotonic()
             time_passed = current_time - reference_time
-            print(f"Time passed: {int(time_passed)}")
+            print(f"Time passed since last position changed: {int(time_passed)}")
             timeout = time_passed > time_to_monitor
             if is_same_position and timeout:
                 print(f"No mouse movement for {self.time_to_monitor}s, Action taken")
@@ -85,12 +86,9 @@ class MouseApp:
 
     def _start(self) -> None:
         self.continue_run = True
-        if self.t:
-            if not self.t.is_alive():
-                print("Start")
-                self.t.start()
-        else:
+        if self.t is None:
             self.t = threading.Thread(target=self.monitor_mouse, args=[self.time_to_monitor])
+            print("Starting...")
             self.t.start()
 
     def _pause(self) -> None:
