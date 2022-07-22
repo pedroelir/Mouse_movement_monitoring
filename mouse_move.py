@@ -16,7 +16,7 @@ TMouseApp = TypeVar("TMouseApp", bound="MouseApp")
 class MouseApp:
     """Application class."""
 
-    def __init__(self: TMouseApp) -> TMouseApp:
+    def __init__(self: TMouseApp, time_to_monitor: int = 120, show_position: bool = False) -> TMouseApp:
         """Create all needed menus, and sub menus from the app."""
         self.icon_image = PIL.Image.open("C:\\Windows\\Cursors\\lperson.cur")
         self.menu_hello = pystray.MenuItem("Say Hello", self._on_clicked)
@@ -25,11 +25,13 @@ class MouseApp:
         self.menu_exit = pystray.MenuItem("Exit", self._exit)
         self.app_menu = pystray.Menu(self.menu_hello, self.menu_start, self.menu_pause, self.menu_exit)
         self.icon = pystray.Icon(
-            "Mouse",
+            "Fejka mysz",
             self.icon_image,
-            title="Mouse checker",
+            title="Fejka mysz",
             menu=self.app_menu,
         )
+        self.time_to_monitor = time_to_monitor
+        self.show_position = show_position
         self.t = None
         self.continue_run = False
 
@@ -51,24 +53,29 @@ class MouseApp:
         while self.continue_run and (not timeout):
             current_position = pyautogui.position()
             is_same_position = current_position == old_position
-            print(f"{current_position=}")
-            print(f"{is_same_position=}")
+            if self.show_position:
+                print(f"{current_position=}")
+                print(f"{is_same_position=}")
             old_position = current_position
             current_time = time.monotonic()
             time_passed = current_time - reference_time
             print(f"Time passed: {int(time_passed)}")
             timeout = time_passed > time_to_monitor
             if is_same_position and timeout:
+                print(f"No mouse movement for {self.time_to_monitor}s, Action taken")
                 pyautogui.moveRel(-1, 1, 0.05)
-                print(pyautogui.position())
+                if self.show_position:
+                    print(pyautogui.position())
                 pyautogui.moveRel(1, -1, 0.05)
-                print(pyautogui.position())
+                if self.show_position:
+                    print(pyautogui.position())
                 pyautogui.press("capslocK")
                 pyautogui.press("capslocK")
                 reference_time = time.monotonic()
                 timeout = False
             elif not is_same_position:
                 reference_time = time.monotonic()
+                timeout = False
             time.sleep(1)
 
     def _on_clicked(self: TMouseApp, icon: pystray.Icon, item: pystray.MenuItem) -> None:
@@ -76,24 +83,24 @@ class MouseApp:
         if str(item) == "Say Hello":
             print("Hello World")
 
-    def _start(self):
-        print("Start")
+    def _start(self) -> None:
         self.continue_run = True
         if self.t:
             if not self.t.is_alive():
+                print("Start")
                 self.t.start()
         else:
-            self.t = threading.Thread(target=self.monitor_mouse, args=[15])
+            self.t = threading.Thread(target=self.monitor_mouse, args=[self.time_to_monitor])
             self.t.start()
 
-    def _pause(self):
+    def _pause(self) -> None:
         print("Pause")
         self.continue_run = False
         if self.t:
             self.t.join(300)
             self.t = None
 
-    def _exit(self):
+    def _exit(self) -> None:
         print("Exit")
         self.continue_run = False
         if self.t:
