@@ -1,6 +1,21 @@
 """Modue that loops chmonitoring the position of the mouse."""
 
+import PIL.Image
+
 import pyautogui
+
+import pystray
+
+
+def on_clicked(icon: pystray.Icon, item: pystray.MenuItem) -> None:
+    """Act when a menu item is clicked."""
+    if str(item) == "Say Hello":
+        print("Hello World")
+    if str(item) == "Start":
+        print("Start")
+    if str(item) == "Exit":
+        print("Exit")
+        icon.stop()
 
 
 def monitor_mouse(time_to_monitor: int) -> None:
@@ -30,7 +45,18 @@ def monitor_mouse(time_to_monitor: int) -> None:
 
 def main() -> None:
     """Run Main function."""
-    monitor_mouse(89)
+    icon_image = PIL.Image.open("C:\\Windows\\Cursors\\lperson.cur")
+    menu_hello = pystray.MenuItem("Say Hello", on_clicked)
+    menu_start = pystray.MenuItem("Start", on_clicked)
+    menu_stop = pystray.MenuItem("Stop", on_clicked)
+    app_menu = pystray.Menu(menu_hello, menu_start, menu_stop)
+    icon = pystray.Icon(
+        "Mouse",
+        icon_image,
+        title="Mouse checker",
+        menu=app_menu,
+    )
+    icon.run()
 
 
 if __name__ == "__main__":
