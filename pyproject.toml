@@ -1,0 +1,21 @@
+[build-system]
+requires = ["flit_core>=3.2"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "KMI"
+version = "0.0.1"
+authors = [{ name = "Pedro Ramirez", email = "pedro.ramirez@dxc.com" }]
+description = "Keyboard Mouse Interface apps."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["pillow", "pyautogui", "pystray", "winotify"]
+
+[project.scripts]
+kmi = "KMI.main:main"
