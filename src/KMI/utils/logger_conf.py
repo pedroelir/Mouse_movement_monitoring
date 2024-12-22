@@ -26,6 +26,7 @@ LOGGING_CONFIG = {
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "standard",
+            "level": "INFO",
         },
         "file": {
             "class": "logging.FileHandler",

@@ -58,7 +58,7 @@ class MouseApp:
             current_position: pyautogui.Point = pyautogui.position()
             is_same_position: bool = current_position == old_position
             logger.debug(f"{current_position=}")
-            logger.debug(f"{is_same_position=}")
+            logger.info(f"{is_same_position=}")
             old_position = current_position
             current_time: float = time.monotonic()
             time_passed: float = current_time - reference_time
