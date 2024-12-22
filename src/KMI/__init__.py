@@ -1,6 +1,5 @@
 import logging
 
-from KMI.utils.logger_conf import setup_logging
+from KMI.utils.logger_conf import get_global_logger
 
-setup_logging()
-logger = logging.getLogger('KMI')
+logger : logging.Logger = get_global_logger()

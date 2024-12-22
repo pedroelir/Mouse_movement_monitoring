@@ -27,7 +27,7 @@ LOGGING_CONFIG = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'formatter': 'standard',
+            'formatter': 'verbose',
             'filename': f'{_logs_path}/KMI_{_now}.log',
         },
     },
@@ -40,9 +40,11 @@ LOGGING_CONFIG = {
     },
 }
 
-def setup_logging():
-    """Setup logging configuration."""
-    # create logs dir
-    _logs_path.mkdir(parents=True, exist_ok=True)
-    logging.config.dictConfig(LOGGING_CONFIG)
+_logs_path.mkdir(parents=True, exist_ok=True)
+logging.config.dictConfig(LOGGING_CONFIG)
+_global_logger: logging.Logger = logging.getLogger('KMI')
+logger = _global_logger
 
+def get_global_logger() -> logging.Logger:
+    """Return the global logger object."""
+    return _global_logger
