@@ -6,18 +6,20 @@ import logging.config
 from pathlib import Path
 
 _logs_path = Path.cwd() / "logs"
-_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+STANDARD_FORMAT = '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
+VERBOSE_FORMAT = "%(asctime)s [%(filename)s:%(lineno)s - %(funcName)s] [%(levelname)s] %(message)s"
 
 LOGGING_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "%(asctime)s [%(pathname)s:%(lineno)s - %(funcName)s] [%(levelname)s] %(message)s",
+            'format': VERBOSE_FORMAT,
         },
 
         'standard': {
-            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'format': STANDARD_FORMAT,
         },
     },
     'handlers': {
