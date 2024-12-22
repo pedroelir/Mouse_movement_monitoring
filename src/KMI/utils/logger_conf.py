@@ -2,18 +2,47 @@
 
 import datetime
 import logging
-import os
+import logging.config
+from pathlib import Path
 
+_logs_path = Path.cwd() / "logs"
+_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-def create_logger() -> None:
-    """Create logger Basic config."""
-    logs_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
-    os.makedirs(logs_path, exist_ok=True)
-    file_name: str = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f_log.txt")
-    log_file: str = os.path.join(logs_path, file_name)
+LOGGING_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "%(asctime)s [%(pathname)s:%(lineno)s - %(funcName)s] [%(levelname)s] %(message)s",
+        },
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(pathname)s:%(lineno)s - %(funcName)s] [%(levelname)s] %(message)s",
-        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
-    )
+        'standard': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'standard',
+            'filename': f'{_logs_path}/KMI_{_now}.log',
+        },
+    },
+    'loggers': {
+        'KMI': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            # 'propagate': False, # Do not propagate to root logger
+        },
+    },
+}
+
+def setup_logging():
+    """Setup logging configuration."""
+    # create logs dir
+    _logs_path.mkdir(parents=True, exist_ok=True)
+    logging.config.dictConfig(LOGGING_CONFIG)
+
