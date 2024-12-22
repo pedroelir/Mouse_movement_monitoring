@@ -1,5 +1,4 @@
 """Modue that loops chmonitoring the position of the mouse."""
-import logging
 import threading
 import time
 from typing import TypeVar
@@ -11,6 +10,8 @@ import pyautogui
 from pystray import Icon, Menu, MenuItem
 
 from winotify import Notification
+
+from KMI import logger
 
 TMouseApp = TypeVar("TMouseApp", bound="MouseApp")
 
@@ -49,15 +50,15 @@ class MouseApp:
             time_to_monitor: Ttime that will trigger mouse movement if not mouse position change was detected
         """
         old_position: pyautogui.Point = pyautogui.position()
-        logging.info("Waiting 5 sec before starting to monitor")
+        logger.info("Waiting 5 sec before starting to monitor")
         pyautogui.countdown(5)
         reference_time: float = time.monotonic()
         timeout: bool = False
         while self.continue_run and (not timeout):
             current_position: pyautogui.Point = pyautogui.position()
             is_same_position: bool = current_position == old_position
-            logging.debug(f"{current_position=}")
-            logging.debug(f"{is_same_position=}")
+            logger.debug(f"{current_position=}")
+            logger.info(f"{is_same_position=}")
             old_position = current_position
             current_time: float = time.monotonic()
             time_passed: float = current_time - reference_time
@@ -65,11 +66,11 @@ class MouseApp:
             timeout = time_passed > time_to_monitor
             if is_same_position and timeout:
                 print("\n")
-                logging.info(f"No mouse movement for {self.time_to_monitor}s, Action taken")
+                logger.info(f"No mouse movement for {self.time_to_monitor}s, Action taken")
                 pyautogui.moveRel(-1, 1, 0.05)
-                logging.info(pyautogui.position())
+                logger.info(pyautogui.position())
                 pyautogui.moveRel(1, -1, 0.05)
-                logging.info(pyautogui.position())
+                logger.info(pyautogui.position())
                 pyautogui.press("shift")
                 reference_time = time.monotonic()
                 timeout = False
@@ -90,12 +91,12 @@ class MouseApp:
         if self.thread is None:
             self.thread = threading.Thread(target=self.monitor_mouse, args=[self.time_to_monitor])
             print("\n")
-            logging.info("Starting...")
+            logger.info("Starting...")
             self.thread.start()
 
     def _pause(self: TMouseApp, icon: Icon, item: MenuItem) -> None:
         print("\n")
-        logging.info("Pause")
+        logger.info("Pause")
         self.continue_run = False
         if self.thread:
             self.thread.join(300)
@@ -103,7 +104,7 @@ class MouseApp:
 
     def _exit(self: TMouseApp, icon: Icon, item: MenuItem) -> None:
         print("\n")
-        logging.info("Exit")
+        logger.info("Exit")
         self.continue_run = False
         if self.thread:
             self.thread.join(300)

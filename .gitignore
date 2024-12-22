@@ -1,5 +1,10 @@
 /.vscode
+**/.venv/
+
 /build
 /dist
+
+*.log
+
 */mouse_move*
 *.py[c]
